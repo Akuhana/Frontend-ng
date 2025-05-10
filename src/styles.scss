@@ -1,0 +1,14 @@
+@import "primeicons/primeicons.css";
+@import 'primeflex/primeflex.scss';
+
+/* You can add global styles to this file, and also import other style files */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--surface-100, #f8f9fa); /* fallback light grey */
+}
+
+html, body {
+  font-family: 'Inter', sans-serif;
+}
