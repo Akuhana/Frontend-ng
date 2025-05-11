@@ -4,7 +4,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { definePreset } from '@primeng/themes';
-
+import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app.routes';
 
 
@@ -32,6 +32,7 @@ export const appConfig: ApplicationConfig = {
                 preset: MyPreset
             }
         }),
+    provideHttpClient(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes)]
 };

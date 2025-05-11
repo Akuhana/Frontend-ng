@@ -1,0 +1,57 @@
+<!-- signup.component.html -->
+<square-layout layout="column">
+  <ng-container *ngIf="!registered; else successTpl">
+    <form (ngSubmit)="register()" class="flex flex-column gap-4 w-full">
+      <h2 class="text-center">Sign Up</h2>
+
+      <input
+        pInputText
+        placeholder="Email"
+        [(ngModel)]="email"
+        name="email"
+        required
+        email
+      />
+
+      <!-- use p-password with toggleMask -->
+      <p-password
+        [(ngModel)]="password"
+        name="password"
+        placeholder="Password"
+        [toggleMask]="true"
+        feedback="false"
+        promptLabel="Enter password"
+        weakLabel="Weak"
+        mediumLabel="Medium"
+        strongLabel="Strong"
+        required
+        minlength="6"
+        styleClass="w-full"
+      ></p-password>
+
+      <ul *ngIf="errors.length" class="text-red-500 list-disc pl-5">
+        <li *ngFor="let e of errors">{{ e }}</li>
+      </ul>
+
+      <button pButton type="submit" label="Sign Up" class="w-full"></button>
+
+      <p class="text-center">
+        Already have an account?
+        <a routerLink="/login">Log in</a>
+      </p>
+    </form>
+  </ng-container>
+
+  <ng-template #successTpl>
+    <div class="flex flex-column align-items-center justify-content-center gap-4 w-full">
+      <h1 class="text-4xl text-center text-green-500">🎉 Registered!</h1>
+      <p class="text-center">Your account has been created successfully.</p>
+      <button
+        pButton
+        label="Go to Sign In"
+        class="w-full"
+        (click)="goToLogin()"
+      ></button>
+    </div>
+  </ng-template>
+</square-layout>

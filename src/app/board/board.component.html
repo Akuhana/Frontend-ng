@@ -1,44 +1,51 @@
 <square-layout layout="row">
     <!-- Backlog -------------------------------------------------------->
-    <section class="flex flex-column gap-3 w-3">
-        <span class="p-inputgroup flex align-items-center w-full min-w-0">
-            <input
-            pInputText
-            class="flex-1 min-w-0 mr-3"
-            placeholder="Add task and hit Enter"
-            [(ngModel)]="newItem"
-            (keyup.enter)="addItem()"
-            />
-            <button
-            pButton
-            type="button"
-            icon="pi pi-plus"
-            [label]="''"
-            (click)="addItem()"
-            ></button>
-        </span>
+    <section class="flex flex-column justify-content-between w-3 h-full">
+        <div class="flex flex-column gap-3">
+            <span class="p-inputgroup flex align-items-center w-full min-w-0">
+                <input
+                pInputText
+                class="flex-1 min-w-0 mr-3"
+                placeholder="Add task and hit Enter"
+                [(ngModel)]="newItem"
+                (keyup.enter)="addItem()"
+                />
+                <button
+                pButton
+                type="button"
+                icon="pi pi-plus"
+                [label]="''"
+                (click)="addItem()"
+                ></button>
+            </span>
 
-        <p-panel header="Backlog" pDroppable="task" class="drop-zone backlog-zone flex-1 overflow-auto" (onDrop)="dropIntoBacklog()">
-            <div class="flex flex-column gap-2">
-                <div
-                    *ngFor="let t of backlogItems"
-                    pDraggable="task"
-                    (onDragStart)="dragStart({ task: t, from: null })"
-                    (onDragEnd)="dragEnd()"
-                    class="task-card"
-                >
-                    <i class="pi pi-bars mr-2 text-500"></i>{{ t }}
+            <p-panel header="Backlog" pDroppable="task" class="drop-zone backlog-zone flex-1 overflow-auto" (onDrop)="dropIntoBacklog()">
+                <div class="flex flex-column gap-2">
+                    <div
+                        *ngFor="let t of backlogItems"
+                        pDraggable="task"
+                        (onDragStart)="dragStart({ task: t, from: null })"
+                        (onDragEnd)="dragEnd()"
+                        class="task-card"
+                    >
+                        <i class="pi pi-bars mr-2 text-500"></i>{{ t }}
+                    </div>
                 </div>
+            </p-panel>
+        </div>
+        
+        <div class="flex flex-column gap-2">
+            <div class="text-sm text-500">
+            Logged in as: {{ userEmail }}
             </div>
-        </p-panel>
-        <!-- Logout button at the very bottom -->
-        <button
+            <button
             pButton
             type="button"
             label="Logout"
             (click)="logout()"
-            class="mt-auto align-self-start w-full"
-        ></button>
+            class="w-full align-self-start"
+            ></button>
+        </div>
     </section>
 
     <!-- Priorities ---------------------------------------------------->

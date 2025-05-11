@@ -8,6 +8,7 @@ import { PanelModule }       from 'primeng/panel';
 import { DragDropModule }    from 'primeng/dragdrop';
 import { RippleModule }      from 'primeng/ripple';
 import { SquareLayoutComponent } from '../square-layout/square-layout.component';
+import { Router }    from '@angular/router';
 
 @Component({
   selector: 'app-board',
@@ -22,17 +23,36 @@ import { SquareLayoutComponent } from '../square-layout/square-layout.component'
   styleUrls: ['./board.component.scss'],
 })
 export class BoardComponent {
+    constructor(private router: Router) {}
+
     /* ---------- state ---------- */
     newItem = '';
     backlogItems: string[] = [];
     priorities: string[][] = [[], [], []];
+    userEmail = '';
+  
+    /* ---------- lifecycle ---------- */
+    ngOnInit() {
+        const token = localStorage.getItem('jwt');
+        if (token) {
+            try {
+                // split header.payload.signature, base64-decode the payload
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                this.userEmail = payload.email || '';
+            } catch {
+                this.userEmail = '';
+            }
+        }
+    }
     
     /* ---------- actions ---------- */
     logout() {
-        // clear your login flag
-        localStorage.removeItem('isLoggedIn');
-        // reload or navigate back to login
-        window.location.reload();
+        // Clear the stored token (and any other auth info)
+        localStorage.removeItem('jwt');
+        localStorage.removeItem('jwt_exp');
+
+        // Send the user back to the login page
+        this.router.navigate(['/login']);
     }
 
     addItem(): void {
