@@ -1,0 +1,24 @@
+<square-layout layout="column">
+    <form (ngSubmit)="login()" class="flex flex-column gap-4 w-full">
+        <h2 class="text-center">Sign In</h2>
+
+        <input
+            pInputText
+            placeholder="Username"
+            [(ngModel)]="username"
+            name="username"
+            required
+        />
+
+        <input
+            pInputText
+            type="password"
+            placeholder="Password"
+            [(ngModel)]="password"
+            name="password"
+            required
+        />
+
+        <button pButton type="submit" label="Log In" class="w-full"></button>
+    </form>
+</square-layout>

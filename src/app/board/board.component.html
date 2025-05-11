@@ -1,0 +1,76 @@
+<square-layout layout="row">
+    <!-- Backlog -------------------------------------------------------->
+    <section class="flex flex-column gap-3 w-3">
+        <span class="p-inputgroup flex align-items-center w-full min-w-0">
+            <input
+            pInputText
+            class="flex-1 min-w-0 mr-3"
+            placeholder="Add task and hit Enter"
+            [(ngModel)]="newItem"
+            (keyup.enter)="addItem()"
+            />
+            <button
+            pButton
+            type="button"
+            icon="pi pi-plus"
+            [label]="''"
+            (click)="addItem()"
+            ></button>
+        </span>
+
+        <p-panel header="Backlog" pDroppable="task" class="drop-zone backlog-zone flex-1 overflow-auto" (onDrop)="dropIntoBacklog()">
+            <div class="flex flex-column gap-2">
+                <div
+                    *ngFor="let t of backlogItems"
+                    pDraggable="task"
+                    (onDragStart)="dragStart({ task: t, from: null })"
+                    (onDragEnd)="dragEnd()"
+                    class="task-card"
+                >
+                    <i class="pi pi-bars mr-2 text-500"></i>{{ t }}
+                </div>
+            </div>
+        </p-panel>
+        <!-- Logout button at the very bottom -->
+        <button
+            pButton
+            type="button"
+            label="Logout"
+            (click)="logout()"
+            class="mt-auto align-self-start w-full"
+        ></button>
+    </section>
+
+    <!-- Priorities ---------------------------------------------------->
+    <section class="flex-1 priorities-grid">
+      <ng-container *ngFor="let col of priorities; let i = index">
+        <p-panel 
+          pDroppable="task" 
+          (onDrop)="dropIntoPriority(i)" 
+          class="drop-zone priority-panel flex flex-column" 
+          [style]="{ height: '100%' }">
+
+          <!-- header template with a colored circle -->
+          <ng-template pTemplate="header">
+            <div class="header-with-badge">
+              <span class="prio-badge prio-{{ i + 1 }}"></span>
+              <span class="header-text">Priority {{ i + 1 }}</span>
+            </div>
+          </ng-template>
+
+
+          <!-- panel body -->
+          <div class="flex flex-column gap-2 flex-1">
+            <div
+              *ngFor="let t of priorities[i]"
+              pDraggable="task"
+              (onDragStart)="dragStart({ task: t, from: i })"
+              class="task-card"
+            >
+              <i class="pi pi-bars mr-2"></i>{{ t }}
+            </div>
+          </div>
+        </p-panel>
+      </ng-container>
+    </section>
+</square-layout>

@@ -1,0 +1,92 @@
+@import "primeicons/primeicons.css";
+@import 'primeflex/primeflex.scss';
+
+/* grid with three equal columns  ----------------------------------*/
+.priorities-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .75rem;
+}
+
+/* draggable cards --------------------------------------------------*/
+.task-card {
+  padding: 0.5rem 0.75rem;
+  background: #303030;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.07);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: move;
+
+  /* smooth transitions */
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+/* darker bg on hover */
+.task-card:hover {
+  background: #232323; /* pick a slightly darker grey */
+}
+
+/* thicker blue border on active/click */
+.task-card:active {
+  border: 2px solid #ffffff;
+}
+
+/* optionally keep the thick border while dragging */
+.task-card.p-draggable-dragging {
+  border: 2px solid #ffffff !important;
+}
+
+
+/* highlight ANY droppable when a matching card hovers over it */
+.drop-zone.p-draggable-enter {
+  background: #363636;            /* darker bg */
+  border: 2px solid  #bdd9de;
+  border-radius: 6px;
+  transition: background .15s ease;
+}
+
+
+/* optional: backlog gets a subtler hint */
+.backlog-zone.p-draggable-enter {
+  border-color: #ffd166;          /* amber outline */
+}
+
+.backlog-zone {
+  /* override any flex-grow imposed by parent */
+  flex: 0 1 auto !important;
+}
+
+/* highlight only the body of a backlog panel when dragging over it */
+.backlog-zone.p-draggable-enter {
+  background: #363636;               /* darker background */
+  border: 2px solid #ffd166;         /* amber border */
+  border-radius: 6px;                /* keep your rounded corners */
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+/* ensure the header content is a left-aligned flex row */
+.header-with-badge {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* let the text sit flush left after the circle */
+.header-with-badge .header-text {
+  margin-left: 0.5rem;
+  flex: 1;               /* fill remaining space if needed */
+  text-align: left;
+}
+
+/* your existing badge rules */
+.prio-badge {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  display: inline-block;
+}
+.prio-1 { background-color: #e53935; }
+.prio-2 { background-color: #fdd835; }
+.prio-3 { background-color: #43a047; }
