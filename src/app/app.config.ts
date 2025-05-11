@@ -4,9 +4,11 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { definePreset } from '@primeng/themes';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { routes } from './app.routes';
 
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { JwtInterceptor }      from './interceptors/jwt.interceptor';
 
 const MyPreset = definePreset(Aura, {
   semantic: {
@@ -32,7 +34,8 @@ export const appConfig: ApplicationConfig = {
                 preset: MyPreset
             }
         }),
-    provideHttpClient(),
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    provideHttpClient(withInterceptorsFromDi()),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes)]
 };

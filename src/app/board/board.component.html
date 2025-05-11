@@ -28,7 +28,17 @@
                         (onDragEnd)="dragEnd()"
                         class="task-card"
                     >
-                        <i class="pi pi-bars mr-2 text-500"></i>{{ t }}
+                        <i class="pi pi-bars mr-2 text-500"></i>{{ t.name }}
+
+                        <!-- delete button -->
+                        <button
+                            pButton
+                            type="button"
+                            icon="pi pi-trash"
+                            class="delete-btn p-button-text p-button-rounded"
+                            (click)="deleteTask(t, null)"
+                            aria-label="Delete task"
+                        ></button>
                     </div>
                 </div>
             </p-panel>
@@ -74,7 +84,16 @@
               (onDragStart)="dragStart({ task: t, from: i })"
               class="task-card"
             >
-              <i class="pi pi-bars mr-2"></i>{{ t }}
+                <i class="pi pi-bars mr-2"></i>{{ t.name }}
+                <!-- delete button -->
+                <button
+                    pButton
+                    type="button"
+                    icon="pi pi-trash"
+                    class="delete-btn p-button-text p-button-rounded"
+                    (click)="deleteTask(t, i)"
+                    aria-label="Delete task"
+                ></button>
             </div>
           </div>
         </p-panel>

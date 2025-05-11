@@ -9,6 +9,8 @@ import { DragDropModule }    from 'primeng/dragdrop';
 import { RippleModule }      from 'primeng/ripple';
 import { SquareLayoutComponent } from '../square-layout/square-layout.component';
 import { Router }    from '@angular/router';
+import { TodoService } from '../services/todo.service';
+import { TodoItem } from '../models/todo-item';
 
 @Component({
   selector: 'app-board',
@@ -23,13 +25,17 @@ import { Router }    from '@angular/router';
   styleUrls: ['./board.component.scss'],
 })
 export class BoardComponent {
-    constructor(private router: Router) {}
+    constructor(
+        private router: Router,
+        private todoService: TodoService
+    ) {}
 
     /* ---------- state ---------- */
     newItem = '';
-    backlogItems: string[] = [];
-    priorities: string[][] = [[], [], []];
+    backlogItems: TodoItem[]  = [];
+    priorities: TodoItem[][] = [[], [], []];
     userEmail = '';
+    dragging: { task: TodoItem; from: number | null } | null = null;
   
     /* ---------- lifecycle ---------- */
     ngOnInit() {
@@ -43,6 +49,14 @@ export class BoardComponent {
                 this.userEmail = '';
             }
         }
+
+        // load all todos
+        this.todoService.getAll().subscribe(all => {
+            this.backlogItems = all.filter(t => t.priority === 0);
+            this.priorities[0] = all.filter(t => t.priority === 1);
+            this.priorities[1] = all.filter(t => t.priority === 2);
+            this.priorities[2] = all.filter(t => t.priority === 3);
+        });
     }
     
     /* ---------- actions ---------- */
@@ -56,16 +70,16 @@ export class BoardComponent {
     }
 
     addItem(): void {
-        const text = this.newItem.trim();
-        if (text) {
-            this.backlogItems.push(text);
+        const name = this.newItem.trim();
+        if (!name) return;
+
+        this.todoService.create(name).subscribe(todo => {
+            this.backlogItems.push(todo);
             this.newItem = '';
-        }
+        });
     }
 
-    dragging: { task: string; from: number | null } | null = null;
-
-    dragStart(payload: { task: string; from: number | null }) {
+    dragStart(payload: { task: TodoItem; from: number | null }) {
         this.dragging = payload;
     }
 
@@ -74,39 +88,58 @@ export class BoardComponent {
     }
 
     dropIntoPriority(k: number): void {
-        if (!this.dragging) {
-            console.warn('dropIntoPriority: nothing being dragged');
-            return;
-        }
-
-        const { task, from } = this.dragging;
-
-        if (from === null) {
-            // came from backlog
-            this.backlogItems = this.backlogItems.filter(t => t !== task);
-        } else if (from !== k) {
-            // came from a different priority column
-            this.priorities[from] = this.priorities[from].filter(t => t !== task);
-        }
-
-        if (!this.priorities[k].includes(task)) {
-            this.priorities[k].push(task);
-        }
-
-        this.dragEnd();
-    }
-
-    dropIntoBacklog() {
         if (!this.dragging) return;
         const { task, from } = this.dragging;
 
-        if (from !== null) {
-        this.priorities[from] =
-            this.priorities[from].filter(t => t !== task);
+        // if dropped back onto the same priority, do nothing
+        if (from === k) {
+            return this.dragEnd();
         }
-        if (!this.backlogItems.includes(task)) {
-            this.backlogItems.push(task);
+
+        // remove from old list
+        if (from === null) {
+            this.backlogItems = this.backlogItems.filter(t => t.id !== task.id);
+        } else if (from !== k) {
+            this.priorities[from] = this.priorities[from].filter(t => t.id !== task.id);
         }
-        this.dragEnd();
+
+        // update priority and persist
+        task.priority = k + 1;
+        this.todoService.update(task).subscribe(() => {
+            this.priorities[k].push(task);
+            this.dragEnd();
+        });
     }
+
+    dropIntoBacklog(): void {
+        if (!this.dragging) return;
+        const { task, from } = this.dragging;
+
+        // if dropped back into backlog where it started, do nothing
+        if (from === null) {
+            return this.dragEnd();
+        }
+        
+        if (from !== null) {
+            this.priorities[from] = this.priorities[from].filter(t => t.id !== task.id);
+        }
+
+        task.priority = 0;
+        this.todoService.update(task).subscribe(() => {
+            this.backlogItems.push(task);
+            this.dragEnd();
+        });
+    }
+
+    deleteTask(task: TodoItem, fromIndex: number | null) {
+        this.todoService.delete(task.id).subscribe(() => {
+            // remove from whichever list it was in
+            if (fromIndex === null) {
+                this.backlogItems = this.backlogItems.filter(t => t.id !== task.id);
+            } else {
+                this.priorities[fromIndex] = this.priorities[fromIndex].filter(t => t.id !== task.id);
+            }
+        });
+    }
+
 }
