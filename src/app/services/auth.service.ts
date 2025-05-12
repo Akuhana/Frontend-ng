@@ -32,4 +32,11 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!localStorage.getItem('jwt');
   }
+
+  validateToken(): Observable<void> {
+    return this.http.get<void>(
+      `${this.baseUrl}/api/auth/validate`,
+      { headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` }}
+    );
+  }
 }
